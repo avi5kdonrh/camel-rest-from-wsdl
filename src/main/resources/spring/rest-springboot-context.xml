@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <camelContext id="cxfrs-db29c5e5-cc3f-4b82-8708-4239738fae73" xmlns="http://camel.apache.org/schema/spring">
+        <dataFormats>
+            <xmljson id="xmljson"/>
+        </dataFormats>
+        <restConfiguration bindingMode="json" component="jetty"
+            host="0.0.0.0" port="8081"/>
+        <rest id="id-997ed433-5c07-4b15-9347-b8563fa78806" path="/report">
+            <get id="id-0e193be0-8b81-4f43-8dd4-0ff9dff81e74"
+                outType="org.test.SampleRequestResponse"
+                type="org.test.SampleRequest" uri="/samplerequest/{arg0}">
+                <to uri="direct:SampleRequest"/>
+            </get>
+        </rest>
+        <route id="SampleRequest">
+            <from id="_from1" uri="direct:SampleRequest"/>
+            <log id="_log1" loggingLevel="INFO" message="SampleRequest"/>
+            <to id="_to1" uri="cxf://http://0.0.0.0:8080/report?serviceClass=org.test.TestRequestSoap&amp;defaultOperationName=SampleRequest"/>
+            <setHeader headerName="Content-Type" id="_setHeader1">
+                <constant>application/json</constant>
+            </setHeader>
+            <setBody id="_setBody1">
+                <simple>${body[0]}</simple>
+            </setBody>
+        </route>
+    </camelContext>
+</beans>
